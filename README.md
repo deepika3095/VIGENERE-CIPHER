@@ -30,7 +30,90 @@ STEP-8: Repeat the above steps to generate the entire cipher text.
 
 
 ## PROGRAM
+```
+NAME: DEEPIKA R
+REG: 212223230038
+#include <stdio.h>
+#include <string.h>
 
+char keyTable[5][5];
+
+// Function to generate key table
+void generateKey(char key[]) {
+    int used[26] = {0};
+    int i, j, k = 0;
+
+    // replace j with i
+    for (i = 0; key[i]; i++)
+        if (key[i] == 'j') key[i] = 'i';
+
+    // fill key letters
+    for (i = 0; i < strlen(key); i++) {
+        if (!used[key[i] - 'a']) {
+            used[key[i] - 'a'] = 1;
+            keyTable[k / 5][k % 5] = key[i];
+            k++;
+        }
+    }
+
+    // fill remaining letters
+    for (i = 0; i < 26; i++) {
+        if (i + 'a' == 'j') continue;
+        if (!used[i]) {
+            keyTable[k / 5][k % 5] = i + 'a';
+            k++;
+        }
+    }
+}
+
+// Function to find position of letter
+void findPos(char ch, int *row, int *col) {
+    if (ch == 'j') ch = 'i';
+    for (int i = 0; i < 5; i++)
+        for (int j = 0; j < 5; j++)
+            if (keyTable[i][j] == ch) {
+                *row = i;
+                *col = j;
+                return;
+            }
+}
+
+// Encryption function
+void encrypt(char text[]) {
+    int i, r1, c1, r2, c2;
+    for (i = 0; text[i]; i += 2) {
+        if (text[i + 1] == '\0') text[i + 1] = 'x'; // pad if odd
+
+        findPos(text[i], &r1, &c1);
+        findPos(text[i + 1], &r2, &c2);
+
+        if (r1 == r2) { // same row
+            text[i] = keyTable[r1][(c1 + 1) % 5];
+            text[i + 1] = keyTable[r2][(c2 + 1) % 5];
+        } else if (c1 == c2) { // same column
+            text[i] = keyTable[(r1 + 1) % 5][c1];
+            text[i + 1] = keyTable[(r2 + 1) % 5][c2];
+        } else { // rectangle rule
+            text[i] = keyTable[r1][c2];
+            text[i + 1] = keyTable[r2][c1];
+        }
+    }
+}
+
+int main() {
+    char key[20] = "monarchy";
+    char text[30] = "instruments";
+
+    generateKey(key);
+    encrypt(text);
+
+    printf("Cipher Text: %s\n", text);
+    return 0;
+}
+```
 ## OUTPUT
+<img width="1695" height="782" alt="image" src="https://github.com/user-attachments/assets/1e11f5fb-63bb-4d6c-a8f0-f6629a1eefae" />
 
 ## RESULT
+The program is executed successfully.
+
